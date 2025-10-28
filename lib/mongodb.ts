@@ -17,14 +17,13 @@ interface MongooseCache {
 
 // Extend the global object to include mongoose cache
 declare global {
-  // eslint-disable-next-line no-var
   var mongoose: MongooseCache | undefined;
 }
 
 // Cache the connection to prevent multiple connections in development
 // In development, Next.js clears the Node.js cache on every hot-reload
 // which can create multiple connections. This cached approach prevents that.
-let cached: MongooseCache = global.mongoose || { conn: null, promise: null };
+const cached: MongooseCache = global.mongoose || { conn: null, promise: null };
 
 if (!global.mongoose) {
   global.mongoose = cached;
@@ -45,6 +44,10 @@ async function connectDB(): Promise<typeof mongoose> {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false, // Disable Mongoose buffering
+      maxPoolSize: 10,
+      minPoolSize: 2,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
     };
 
     // Create new connection promise

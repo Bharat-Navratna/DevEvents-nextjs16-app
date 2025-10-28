@@ -24,7 +24,7 @@ const BookingSchema = new Schema<IBooking>(
       validate: {
         validator: (v: string) => {
           // Email validation regex
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
           return emailRegex.test(v);
         },
         message: 'Please provide a valid email address',
