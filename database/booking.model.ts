@@ -76,7 +76,7 @@ BookingSchema.pre('save', async function (next) {
 BookingSchema.index({ eventId: 1 });
 
 // Compound index for eventId and email to prevent duplicate bookings
-BookingSchema.index({ eventId: 1, email: 1 });
+BookingSchema.index({ eventId: 1, email: 1 }, { unique: true });
 
 // Export Booking model
 const Booking: Model<IBooking> =

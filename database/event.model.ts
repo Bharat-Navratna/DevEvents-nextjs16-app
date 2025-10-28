@@ -121,14 +121,24 @@ EventSchema.pre('save', async function (next) {
       .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
 
     // Ensure slug uniqueness by appending timestamp if needed
-    const existingEvent = await mongoose.models.Event.findOne({
-      slug: event.slug,
-      _id: { $ne: event._id },
-    });
+    // const existingEvent = await mongoose.models.Event.findOne({
+    //   slug: event.slug,
+    //   _id: { $ne: event._id },
+    // });
 
-    if (existingEvent) {
+    // if (existingEvent) {
+    //   event.slug = `${event.slug}-${Date.now()}`;
+    // }
+
+    const Event = mongoose.models.Event || mongoose.model<IEvent>('Event', EventSchema);
+    const existingEvent = await Event.findOne({
+       slug: event.slug,
+       _id: { $ne: event._id },
+     });
+
+      if (existingEvent) {
       event.slug = `${event.slug}-${Date.now()}`;
-    }
+  }
   }
 
   // Normalize date to ISO format if modified
@@ -140,7 +150,7 @@ EventSchema.pre('save', async function (next) {
       }
       // Store in ISO format (YYYY-MM-DD)
       event.date = parsedDate.toISOString().split('T')[0];
-    } catch (error) {
+    } catch {
       return next(new Error('Date must be a valid date string'));
     }
   }
